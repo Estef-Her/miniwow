@@ -101,15 +101,8 @@ class Controller{
 		cout<<"Abre metoodod "<<jugador.getNombre()<<" "<< jugador.getId()<<" "<<endl;
 		char sSQL [BUFFER_SIZE] = "\0";
 		
-        int b = jugador.getId().length();  
-        char id [b+1]; 
-        strcpy(id, jugador.getId().c_str()); 
 		
-		int n = jugador.getNombre().length();  
-        char nombre [n + 1]; 
-        strcpy(nombre, jugador.getNombre().c_str()); 
-		
-        sprintf(sSQL, "insert into jugador  values ('%s','%s', %i);", id ,nombre,jugador.getStatus());
+        sprintf(sSQL, "insert into jugador  values ('%s','%s', %i);", jugador.getId().c_str() ,jugador.getNombre().c_str(),jugador.getStatus());
         rc = sqlite3_exec(db,sSQL, callback, (void*)data, &zErrMsg); 
         if( rc != SQLITE_OK ) {
         fprintf(stderr, "SQL error: %s\n", zErrMsg);
@@ -126,11 +119,8 @@ class Controller{
 		cout<<"Abre metoodod "<<user<<" "<<endl;
 		char sSQL [BUFFER_SIZE] = "\0";
 		
-        int b = user.length();  
-        char id [b+1]; 
-        strcpy(id, user.c_str()); 
 		
-        sprintf(sSQL, "select * from jugador where id='%s';",id );
+        sprintf(sSQL, "select * from jugador where id='%s';",user.c_str());
         rc = sqlite3_exec(db,sSQL, callback, (void*)data, &zErrMsg); 
         if( rc != SQLITE_OK ) {
         fprintf(stderr, "SQL error: %s\n", zErrMsg);
@@ -171,8 +161,65 @@ class Controller{
  
         }while(choice ==1 && choice == 2);
 	}
-	void trasladarPersonaje(string apodo){
+	void verRegion(string apodo){
+		char sSQL [BUFFER_SIZE] = "\0";
+       
 		
+        sprintf(sSQL, "select personaje.nombre, region.nombre , continente.nombre from personaje, region, continente where continente.id=region.continente AND region.id= personaje.region AND personaje.nombre='%s';",apodo.c_str());
+        rc = sqlite3_exec(db,sSQL, callback, (void*)data, &zErrMsg); 
+        if( rc != SQLITE_OK ) {
+        fprintf(stderr, "SQL error: %s\n", zErrMsg);
+        sqlite3_free(zErrMsg);
+        } else {
+			cout<<"La Ubicacion actual"<<endl;
+            fprintf(stdout, "Operation done successfully\n");
+        }
+	}
+	int verContinentes(){
+		int choice=0;
+		char sSQL [BUFFER_SIZE] = "\0";
+        sprintf(sSQL, "select * from continente ;");
+        rc = sqlite3_exec(db,sSQL, callback, (void*)data, &zErrMsg); 
+        if( rc != SQLITE_OK ) {
+        fprintf(stderr, "SQL error: %s\n", zErrMsg);
+        sqlite3_free(zErrMsg);
+        } else{
+            fprintf(stdout, "Operation done successfully\n");
+			cout<<"Digite el id del Continente al que quiere transportarse"<<endl;
+			cin>>choice;
+        }
+		return choice;
+	}
+	int verRegionesXContinente(int id){
+		system("cls");
+        cout << "--Regiones--"<< endl;
+        string query = "select region.id , region.nombre from region where continente=" + to_string(id);
+        rc = sqlite3_exec(db, query.c_str(), callback, (void *)data, &zErrMsg);
+        int choice;
+        cout << "Digite el id de la region a la que desea trasladarse " << endl;
+        cin>>choice;
+		return choice;
+	}
+	void trasladarPersonaje(string apodo){
+		verRegion(apodo);
+		int continente= verContinentes();
+		int region = verRegionesXContinente(continente);
+		actualizarRegion(apodo,continente);
+		cout<<"Traslado Finalizdo!"<<endl;
+		cout<<"Continente :"<<continente<<endl;
+		cout<<"Region : "<<region<<endl;
+		
+	}
+	void actualizarRegion(string apodo,int region){
+		char sSQL [BUFFER_SIZE] = "\0";
+        sprintf(sSQL, "update personaje set region ='%d' where nombre='%s';",to_string(region),apodo.c_str());
+        rc = sqlite3_exec(db,sSQL, callback, (void*)data, &zErrMsg); 
+        if( rc != SQLITE_OK ) {
+        fprintf(stderr, "SQL error: %s\n", zErrMsg);
+        sqlite3_free(zErrMsg);
+        } else{
+            fprintf(stdout, "Operation done successfully\n");
+        }
 	}
 	void equiparPersonaje(string apodo){
 		
@@ -203,11 +250,9 @@ class Controller{
 	}
 	void verPersonajes(string user){
 		char sSQL [BUFFER_SIZE] = "\0";
-        int b = user.length();  
-        char id [b+1]; 
-        strcpy(id, user.c_str()); 
+        
 		
-        sprintf(sSQL, "select * from personaje where jugador='%s';",id );
+        sprintf(sSQL, "select * from personaje where jugador='%s';",user.c_str());
         rc = sqlite3_exec(db,sSQL, callback, (void*)data, &zErrMsg); 
         if( rc != SQLITE_OK ) {
         fprintf(stderr, "SQL error: %s\n", zErrMsg);

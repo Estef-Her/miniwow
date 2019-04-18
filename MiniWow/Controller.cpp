@@ -9,7 +9,6 @@
 #include"Faccion.cpp"
 
 #define BUFFER_SIZE 256
-
 using namespace std;
 
 class Controller{
@@ -247,7 +246,7 @@ class Controller{
         cout<<"Digite el id de la faccion que desea escoger"<<endl;
         cin>>choice;
         return choice;
-        verRazasPorFaccion(choice);
+        //verRazasPorFaccion(choice);
         }
         
 	}

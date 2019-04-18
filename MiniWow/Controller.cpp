@@ -13,6 +13,7 @@ using namespace std;
 
 class Controller{
 	private:
+	///HOLA JOSUE 
 	    sqlite3 *db;
         char *zErrMsg = 0;
         int rc;

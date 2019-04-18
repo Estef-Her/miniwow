@@ -10,7 +10,7 @@
 
 #define BUFFER_SIZE 256
 using namespace std;
-
+//Cambios mas actuales 
 class Controller{
 	private:
 	///HOLA JOSUE 
@@ -114,7 +114,7 @@ class Controller{
         
         }
 
-	}
+	
 	void iniciarJugador(string user){
 		sqlite3_stmt *stmt;  
 		cout<<"Abre metoodod "<<user<<" "<<endl;
@@ -295,7 +295,7 @@ class Controller{
         //verRazasPorFaccion(choice);
         }
         
-	}
+	
 	
 	void registrarJugador(){
         system("cls");
@@ -343,7 +343,7 @@ class Controller{
 		int faccion = verFacciones();
         int raza = verRazasPorFaccion(faccion);
         int clase = verClasesporRaza(raza);
-        this->insertarPersonaje(jugador, userName, genero, color, faccion, raza, clase);
+        this->insertarPersonaje(user, userName, genero, color, faccion, raza, clase);
 
 	}
      int verRazasPorFaccion(int raza){
@@ -367,9 +367,9 @@ class Controller{
         cin>>choice;
         return choice;
     }
-    void insertarPersonaje(Jugador jugador, string username, string genero, string color, int faccion, int raza, int clase)
+    void insertarPersonaje(string user, string username, string genero, string color, int faccion, int raza, int clase)
     {
-        string query = "insert into personaje(nombre, genero,color, jugador, faccion, raza, clase"
+        string query = "insert into personaje(nombre, genero,color, jugador, faccion, raza, clase";
 
     }
 };

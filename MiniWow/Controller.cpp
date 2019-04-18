@@ -1,9 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "Jugador.cpp"
-#include <C:\Users\dh173\OneDrive\Documentos\GitHub\miniwow\MiniWow\sqlite3.h>
+#include <C:\Users\Josue\Desktop\miniwow\MiniWow\sqlite3.h>
 #include <iostream>
 #include<string>
+#include<list>
+#include<iterator>
+#include"Faccion.cpp"
 
 #define BUFFER_SIZE 256
 using namespace std;
@@ -32,19 +35,46 @@ class Controller{
 	}
 	
 	static int callback(void *data, int argc, char **argv, char **azColName){
-        int i;
+        int i = 0;
+        Faccion * f = new Faccion();
         //fprintf(stderr, "%s: ", (const char*)data);
         for(i = 0; i<argc; i++){
-          //  printf("%s = %s", azColName[i], argv[i] ? argv[i] : "NULL");
-          printf("%s ", argv[i] ? argv[i] : "NULL");
-        }
+            //printf("%s ", azColName[i], argv[i] ? argv[i] : "NULL");
+            printf("%s ", argv[i] ? argv[i] : "NULL");
+          
+       }
    
         printf("\n");
         return 0;
     }
+    //prueba
+    static int mycallback(void *lista, int count , char **data, char **columnNames){
+        list<Faccion>* f = static_cast<list<Faccion>*>(lista);
+        Faccion *object = new Faccion();
+        Faccion *w = new Faccion();
+        for(int i = 0; i<count; i++){
+            if(i ==0 ){
+                int x = atoi(data[i]);
+               // cout << "esto es data" << x << endl;
+                object->setId(x);
+                //cout << "objeto" << object->getId() << endl;
+            }
+            
+            else{
+                object->setNombreP(data[i]);
+            }
+        }
+        system("pause");
+        f->push_back(*object);
+        cout<<object->getNombreP()<<endl;
+        cout<<"Se ha ingresado nuevos objeto a la lista"<<endl;
+        system("pause");
+        return 0;
+    }
 
-	void menuInicio(){
-		int choice=0;
+        void menuInicio()
+    {
+        int choice=0;
 		do{
 			cout<<("Inicio\n");
             cout<<("1. Iniciar Sesion\n");
@@ -80,7 +110,9 @@ class Controller{
         } else {
             fprintf(stdout, "Operation done successfully\n");
         }
-        cout<<"Cambios realizados"<<endl;
+        
+        }
+
 	}
 	void iniciarJugador(string user){
 		sqlite3_stmt *stmt;  
@@ -235,10 +267,11 @@ class Controller{
         }
 		
 	}
-	void verFacciones(){
+	int verFacciones(){
         system("cls");
-		rc = sqlite3_exec(db, "SELECT * from Faccion", callback, (void*)data, &zErrMsg);
-   
+        list<Faccion> * listFacciones = new list<Faccion>();
+        rc = sqlite3_exec(db, "SELECT * from Faccion", mycallback, listFacciones, &zErrMsg);
+
         if( rc != SQLITE_OK ) {
         fprintf(stderr, "SQL error: %s\n", zErrMsg);
         sqlite3_free(zErrMsg);
@@ -246,10 +279,18 @@ class Controller{
         else {
 			 
              fprintf(stdout, "Operation done successfully\n");
-			 int choice;
-             cout<<"Digite el id de la faccion que desea escoger"<<endl;
-             cin>>choice;
-    
+        }
+        cout<<" Facciones disponibles "<<endl;
+        cout<<"Id  "<<"   "<<"Nombre"<<endl;
+        list<Faccion>::iterator it;
+         for (it = listFacciones->begin(); it != listFacciones->end(); it++)
+        {
+            cout<<it->getId()<<"      "<<it->getNombreP()<<endl;
+        }
+        int choice;
+        cout<<"Digite el id de la faccion que desea escoger"<<endl;
+        cin>>choice;
+        return choice;
         verRazasPorFaccion(choice);
         }
         
@@ -294,13 +335,17 @@ class Controller{
 		    }
 		}while(choice!=2 && choice !=1);
 		do{
-		cout<<"Digite un color de piel , verde , azul , roja , morena "<<endl;
+		cout<<"Digite un color de piel : verde , azul , roja , morena "<<endl;
 		cin>>color;
 		}while(color != "verde" && color != "azul" && color!="roja"&& color!="morena");
 		
-		verFacciones();
+		int faccion = verFacciones();
+        int raza = verRazasPorFaccion(faccion);
+        int clase = verClasesporRaza(raza);
+        this->insertarPersonaje(jugador, userName, genero, color, faccion, raza, clase);
+
 	}
-    void verRazasPorFaccion(int raza){
+     int verRazasPorFaccion(int raza){
         system("cls");
         cout<<"Razas Disponibles para "<< raza <<endl;
         string query = "select raza.id, raza.nombre from existen,raza where existen.raza = raza.id and existen.faccion = "+ to_string(raza);
@@ -308,9 +353,10 @@ class Controller{
         int choice;
         cout << "Digite el id de la raza que desea escoger" << endl;
         cin >> choice;
-        verClasesporRaza(choice);
+        return choice;
+      //  verClasesporRaza(choice);
     }
-    void verClasesporRaza(int raza){
+    int verClasesporRaza(int raza){
         system("cls");
         cout << "Clases disponibles para " << raza << endl;
         string query = "select clase.id, clase.nombre from tienen,clase where tienen.clase = clase.id and tienen.raza = " + to_string(raza);
@@ -318,5 +364,11 @@ class Controller{
         int choice;
         cout << "Digite el id de la clase que desea escoger" << endl;
         cin>>choice;
+        return choice;
+    }
+    void insertarPersonaje(Jugador jugador, string username, string genero, string color, int faccion, int raza, int clase)
+    {
+        string query = "insert into personaje(nombre, genero,color, jugador, faccion, raza, clase"
+
     }
 };

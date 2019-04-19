@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "Jugador.cpp"
-#include <C:\Users\Josue\Desktop\miniwow\MiniWow\sqlite3.h>
+#include <C:\Users\dh173\OneDrive\Documentos\GitHub\miniwow\MiniWow\sqlite3.h>
 #include <iostream>
 #include<string>
 #include<list>
@@ -145,7 +145,8 @@ class Controller{
 			cout<<"Bienvenido " << apodo << endl;
             cout<<("1. Trasladar personaje \n");
             cout<<("2. Equipar Personaje\n");
-            cout<<("3. Salir\n");
+			cout<<("3. Eliminar personaje\n");
+            cout<<("4. Salir\n");
             cin>> choice ;
  
             switch (choice){
@@ -153,14 +154,26 @@ class Controller{
                     break;
                 case 2: equiparPersonaje(apodo);
                     break;
-                case 3:printf("Saliendo...\n");
+                case 3: eliminarPersonaje(apodo);
                     break;
- 
+                case 4:printf("Saliendo...\n");
+                    break;
                 default:printf("Digite una opcion valida!\n");
                      break;
             }
  
-        }while(choice ==1 && choice == 2);
+        }while(choice ==1 && choice == 2 && choice ==3);
+	}
+	void eliminarPersonaje(string apodo){
+		char sSQL [BUFFER_SIZE] = "\0";
+        sprintf(sSQL, "delete from personaje where nombre= '%s';",apodo.c_str());
+        rc = sqlite3_exec(db,sSQL, callback, (void*)data, &zErrMsg); 
+        if( rc != SQLITE_OK ) {
+        fprintf(stderr, "SQL error: %s\n", zErrMsg);
+        sqlite3_free(zErrMsg);
+        } else {
+            fprintf(stdout, "Operation done successfully\n");
+        }
 	}
 	void verRegion(string apodo){
 		char sSQL [BUFFER_SIZE] = "\0";
@@ -196,16 +209,18 @@ class Controller{
         cout << "--Regiones--"<< endl;
         string query = "select region.id , region.nombre from region where continente=" + to_string(id);
         rc = sqlite3_exec(db, query.c_str(), callback, (void *)data, &zErrMsg);
-        int choice;
+        int choice=0;
         cout << "Digite el id de la region a la que desea trasladarse " << endl;
         cin>>choice;
 		return choice;
 	}
+	
+	
 	void trasladarPersonaje(string apodo){
 		verRegion(apodo);
 		int continente= verContinentes();
 		int region = verRegionesXContinente(continente);
-		actualizarRegion(apodo,continente);
+		actualizarRegion(apodo,region);
 		cout<<"Traslado Finalizdo!"<<endl;
 		cout<<"Continente :"<<continente<<endl;
 		cout<<"Region : "<<region<<endl;
@@ -213,7 +228,7 @@ class Controller{
 	}
 	void actualizarRegion(string apodo,int region){
 		char sSQL [BUFFER_SIZE] = "\0";
-        sprintf(sSQL, "update personaje set region ='%d' where nombre='%s';",to_string(region),apodo.c_str());
+        sprintf(sSQL, "update personaje set region =%i where nombre='%s';",region,apodo.c_str());
         rc = sqlite3_exec(db,sSQL, callback, (void*)data, &zErrMsg); 
         if( rc != SQLITE_OK ) {
         fprintf(stderr, "SQL error: %s\n", zErrMsg);
@@ -368,8 +383,19 @@ class Controller{
         return choice;
     }
     void insertarPersonaje(string user, string username, string genero, string color, int faccion, int raza, int clase)
-    {
+    { 
+	    int continente=0;
+	    if(faccion==1){
+			continente=2;
+		}
+		if(faccion==2){
+			continente=1;
+		}
+		if(raza==13){
+			continente=3;
+		}
+		
         string query = "insert into personaje(nombre, genero,color, jugador, faccion, raza, clase";
-
+		
     }
 };

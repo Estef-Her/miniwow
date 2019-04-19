@@ -1,76 +1,76 @@
     #include"Personaje.h"
 	
 	Personaje::Personaje(){}
-    Personaje::Personaje(char* _genero, char* _coloPiel, char* _nombre, Jugador _jugador, Faccion _faccion, Raza _raza, Clase _clase, Region _region, int arm, int niv){
-		this.genero=_genero;
-		this.colorPiel=_coloPiel;
-		this.nombre=_nombre;
-		this.jugador=_jugador;
-		this.faccion=_faccion;
-		this.raza=_raza;
-		this.clase=_clase;
-		this.region=_region;
-		this.armamento=arm;
-		this.nivel=niv;
+    Personaje::Personaje(string _genero, string _coloPiel, string _nombre, Jugador _jugador, Faccion _faccion, Raza _raza, Clase _clase, Region _region, int arm, int niv){
+		genero=_genero;
+		colorPiel=_coloPiel;
+		nombre=_nombre;
+		jugador=_jugador;
+		faccion=_faccion;
+		raza=_raza;
+		clase=_clase;
+		region=_region;
+		armamento=arm;
+		nivel=niv;
 	}
     Personaje::~Personaje(){}
-	char* Personaje::getGenero(){
-		return this.genero;
+	string Personaje::getGenero(){
+		return genero;
 	}
-	char* Personaje::getColorPiel(){
-		return this.colorPiel;
+	string Personaje::getColorPiel(){
+		return colorPiel;
 	}
-    char* Personaje::getNombre(){
-		return this.nombre;
+    string Personaje::getNombre(){
+		return nombre;
 	}
 	Jugador Personaje::getJugador(){
-		return this.jugador;
+		return jugador;
 	}
 	Faccion Personaje::getFaccion(){
-		return this.faccion;
+		return faccion;
 	}
 	Raza Personaje::getRaza(){
-		return this.raza;
+		return raza;
 	}
 	Clase Personaje::getClase(){
-		return this.clase;
+		return clase;
 	}
 	Region Personaje::getRegion(){
-		return this.region;
+		return region;
 	}
 	int Personaje::getArmamento(){
-		return this.armamento;
+		return armamento;
 	}
 	int Personaje::getNivel(){
-		return this.nivel;
+		return nivel;
 	}
-	void Personaje::setGenero(char* _genero){
-	     this.genero=_genero;;
+	void Personaje::setGenero(string _genero){
+	     genero=_genero;;
 	}
-	void Personaje::setColorPiel(char* _color){
-		this.colorPiel=_color;
+	void Personaje::setColorPiel(string _color){
+		colorPiel=_color;
 	}
-    void Personaje::setNombre(char* _nombre){
-		this.nombre=_nombre;
+    void Personaje::setNombre(string _nombre){
+		nombre=_nombre;
 	}
 	void Personaje::setJugador(Jugador _jugador){
-		this.jugador=_jugador;
+		jugador=_jugador;
 	}
 	void Personaje::setFaccion(Faccion _faccion){
-		this.Faccion=_faccion;
+		faccion=_faccion;
 	}
 	void Personaje::setRaza(Raza _raza){
-		this.raza=_raza;
+		raza=_raza;
 	}
 	void Personaje::setClase(Clase _clase){
-		this.clase=_clase;
+		clase=_clase;
 	}
 	void Personaje::setRegion(Region _region){
-		this.region=_region;
+		region=_region;
 	}
 	void Personaje::setArmamento(int arm){
-		this.armamento=arm;
+		armamento=arm;
 	}
 	void Personaje::setNivel(int niv){
-		this.nivel=niv;
+		nivel=niv;
 	}

@@ -3,33 +3,36 @@
     Region::Region(){
 		
 	}
-    Region::Region(Continente _continente, int _id,char* _nombre,char* _capital){
-		
+    Region::Region(Continente _continente, int _id,string _nombre,string _capital){
+		continente=_continente;
+		id=_id;
+		nombre=_nombre;
+		capital=_capital;
 	}
     Region::~Region(){
 		
 	}
 	Continente Region:: getContinente(){
-		return this.continente;
+		return continente;
 	}
     int Region:: getId(){
-		return this.id;
+		return id;
 	}
-    char* Region::getNombre(){
-		return this.nombre;
+    string Region::getNombre(){
+		return nombre;
 	}
-	char* Region::getCapital{
-		return this.capital;
+	string Region::getCapital{
+		return capital;
 	}
 	void Region::setContinente(Continente cont){
-		this.continente=cont;
+		continente=cont;
 	}
     void Region::setId(int _id){
-		this.id=_id;
+		id=_id;
 	}
-    void Region::setNombre(char* _nombre){
-		this.nombre=_nombre;
+    void Region::setNombre(string _nombre){
+		nombre=_nombre;
 	}
-    void Region::setCapital(char* _capital){
-		this.capital=_capital;
+    void Region::setCapital(string _capital){
+		capital=_capital;
 	}

@@ -1,20 +1,20 @@
 #ifndef CLASE_H
 #define CLASE_H
 #include<iostream>
-
+#include<string>
 class Clase{
 
  private:
     int id;
-    char* nombre;
+    string nombre;
 
  public:
     Clase();
-    Clase(int _id,char* _nombre);
+    Clase(int _id,string _nombre);
     ~Clase();
     int getId();
-    char* getNombre();
+    string getNombre();
     void setId(int _id);
-    void setNombre(char* _nombre);
+    void setNombre(string _nombre);
 };
 #endif

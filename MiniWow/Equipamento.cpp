@@ -4,28 +4,35 @@ Equipamento::Equipamento(){
 
 }
 Equipamento::Equipamento(int _id,char* _nombre, int _nivel){
-    this->id=_id;
-    this->nombre=_nombre;
-    this->nivel=_nivel;
+    id=_id;
+    nombre=_nombre;
+    nivel=_nivel;
 }
 Equipamento::~Equipamento(){
 
 }
 int Equipamento::getId(){
-    return this->id;
+    return id;
 }
 char* Equipamento::getNombre(){
-    return this->nombre;
+    return nombre;
 }
 int Equipamento::getNivel(){
-    return this->nivel;
+    return nivel;
 }
 void Equipamento::setId(int _id){
-    this->id=_id;
+    id=_id;
 }
 void Equipamento::setNombre(char* _nombre){
-    this->nombre=_nombre;
+    nombre=_nombre;
 }
 void Equipamento::setNivel(int _niv){
-    this->nivel=_niv;
+    nivel=_niv;
+}
+std::string Equipamento::toString(){
+ std::stringstream s;
+ s<<"Id: "<<getId()<<std::endl;
+ s<<"Nombre: "<<getNombre()<<std::endl;
+ s<<"Nivel: "<<getNivel()<<std::endl;
+    return s.str();
 }

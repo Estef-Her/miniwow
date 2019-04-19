@@ -1,21 +1,21 @@
 #ifndef RAZA_H
 #define RAZA_H
 #include<iostream>
-
+#include<string>
 class Raza {
 
  private:
     int id;
-    char* nombre;
+    string nombre;
 
  public:
     Raza();
-    Raza(int _id,char* _nombre);
+    Raza(int _id,string _nombre);
     ~Raza();
     int getId();
-    char* getNombre();
+    string getNombre();
     void setId(int _id);
-    void setNombre(char* _nombre);
+    void setNombre(string _nombre);
 
 
 

@@ -1,6 +1,8 @@
 #ifndef EQUIPAMENTO_H
 #define EQUIPAMENTO_H
 #include<iostream>
+#include<string>
+#include<sstream>
 
 class Equipamento {
 
@@ -19,5 +21,6 @@ class Equipamento {
     void setId(int _id);
     void setNombre(char* _nombre);
     void setNivel(int _niv);
+	string toString();
 };
 #endif

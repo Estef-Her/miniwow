@@ -2,27 +2,27 @@
 #define REGION_H
 #include<iostream>
 #include"Continente.h"
-
+#include<string>
 class Region{
 
  private:
     Continente continente;
     int id;
-    char* nombre;
-	char* capital;
+    string nombre;
+	string capital;
 
  public:
     Region();
-    Region(Continente _continente, int _id,char* _nombre,char* _capital);
+    Region(Continente _continente, int _id,string _nombre,string _capital);
     ~Region();
 	Continente getContinente();
     int getId();
-    char* getNombre();
-	char* getCapital;
+    string getNombre();
+	string getCapital;
 	void setContinente(Continente cont);
     void setId(int _id);
-    void setNombre(char* _nombre);
-    void setCapital(char* _capital);
+    void setNombre(string _nombre);
+    void setCapital(string _capital);
 
 };
 #endif

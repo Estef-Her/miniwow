@@ -7,7 +7,7 @@
 #include<list>
 #include<iterator>
 #include"Faccion.cpp"
-
+#include<time.h>
 #define BUFFER_SIZE 256
 using namespace std;
 //Cambios mas actuales 
@@ -22,7 +22,7 @@ class Controller{
 	public:
 	
 	Controller (){
-		openDataBase();
+		
 	}
 	int openDataBase(){
 		rc = sqlite3_open("miniwow.db", &db);
@@ -72,9 +72,24 @@ class Controller{
         system("pause");
         return 0;
     }
+	static int mycallbackRegiones(void *lista, int count , char **data, char **columnNames){
+        list<int>* f = static_cast<list<int>*>(lista);
+        int ob ;
+        int w ;
+        for(int i = 0; i<count; i++){
+            if(i ==0 ){
+                w = atoi(data[i]);
+            }
+        }
+        system("pause");
+        f->push_back(w);
+        system("pause");
+        return 0;
+    }
 
         void menuInicio()
     {
+		
         int choice=0;
 		do{
 			cout<<("Inicio\n");
@@ -98,6 +113,7 @@ class Controller{
         }while(choice ==1 && choice == 2);
 	}
 	void insertarJugadores(Jugador jugador){
+		openDataBase();
 		sqlite3_stmt *stmt;  
 		cout<<"Abre metoodod "<<jugador.getNombre()<<" "<< jugador.getId()<<" "<<endl;
 		char sSQL [BUFFER_SIZE] = "\0";
@@ -116,6 +132,7 @@ class Controller{
 
 	
 	void iniciarJugador(string user){
+		openDataBase();
 		sqlite3_stmt *stmt;  
 		cout<<"Abre metoodod "<<user<<" "<<endl;
 		char sSQL [BUFFER_SIZE] = "\0";
@@ -165,6 +182,7 @@ class Controller{
         }while(choice ==1 && choice == 2 && choice ==3);
 	}
 	void eliminarPersonaje(string apodo){
+		openDataBase();
 		char sSQL [BUFFER_SIZE] = "\0";
         sprintf(sSQL, "delete from personaje where nombre= '%s';",apodo.c_str());
         rc = sqlite3_exec(db,sSQL, callback, (void*)data, &zErrMsg); 
@@ -176,6 +194,7 @@ class Controller{
         }
 	}
 	void verRegion(string apodo){
+		openDataBase();
 		char sSQL [BUFFER_SIZE] = "\0";
        
 		
@@ -190,6 +209,7 @@ class Controller{
         }
 	}
 	int verContinentes(){
+		openDataBase();
 		int choice=0;
 		char sSQL [BUFFER_SIZE] = "\0";
         sprintf(sSQL, "select * from continente ;");
@@ -205,6 +225,7 @@ class Controller{
 		return choice;
 	}
 	int verRegionesXContinente(int id){
+		openDataBase();
 		system("cls");
         cout << "--Regiones--"<< endl;
         string query = "select region.id , region.nombre from region where continente=" + to_string(id);
@@ -217,6 +238,7 @@ class Controller{
 	
 	
 	void trasladarPersonaje(string apodo){
+		openDataBase();
 		verRegion(apodo);
 		int continente= verContinentes();
 		int region = verRegionesXContinente(continente);
@@ -227,6 +249,7 @@ class Controller{
 		
 	}
 	void actualizarRegion(string apodo,int region){
+		openDataBase();
 		char sSQL [BUFFER_SIZE] = "\0";
         sprintf(sSQL, "update personaje set region =%i where nombre='%s';",region,apodo.c_str());
         rc = sqlite3_exec(db,sSQL, callback, (void*)data, &zErrMsg); 
@@ -265,11 +288,13 @@ class Controller{
         }while(choice ==1 && choice == 2);
 	}
 	void verPersonajes(string user){
+		
 		char sSQL [BUFFER_SIZE] = "\0";
         
-		
+		openDataBase();
         sprintf(sSQL, "select * from personaje where jugador='%s';",user.c_str());
         rc = sqlite3_exec(db,sSQL, callback, (void*)data, &zErrMsg); 
+		sqlite3_close(db);
         if( rc != SQLITE_OK ) {
         fprintf(stderr, "SQL error: %s\n", zErrMsg);
         sqlite3_free(zErrMsg);
@@ -284,6 +309,7 @@ class Controller{
 		
 	}
 	int verFacciones(){
+		openDataBase();
         system("cls");
         list<Faccion> * listFacciones = new list<Faccion>();
         rc = sqlite3_exec(db, "SELECT * from Faccion", mycallback, listFacciones, &zErrMsg);
@@ -309,10 +335,42 @@ class Controller{
         return choice;
         //verRazasPorFaccion(choice);
         }
+
+    int verRegionezContinente(int con){
+		int region;
+		int id;
+        srand(time(NULL));
+		char sSQL [BUFFER_SIZE] = "\0";
+		openDataBase();
+        system("cls");
+        list<int> * listRegiones = new list<int>();
+		sprintf(sSQL, "SELECT region.id from region where region.continente=%i';",con);
+        rc = sqlite3_exec(db, sSQL, mycallback, listRegiones, &zErrMsg);
+
+        if( rc != SQLITE_OK ) {
+        fprintf(stderr, "SQL error: %s\n", zErrMsg);
+        sqlite3_free(zErrMsg);
+        }else {
+			int tam=listRegiones->size();
+			region =rand()%tam;
+            fprintf(stdout, "Operation done successfully\n");
+            list<int>::iterator it;
+			int i=0;
+            for (it = listRegiones->begin(); it != listRegiones->end(); it++)
+            {
+				if(i==region){
+					id=*it;
+				}
+				i++;
+            }
+        }
+		return id;
+	}
         
 	
 	
 	void registrarJugador(){
+		openDataBase();
         system("cls");
 		string nombre;
 		string username;
@@ -327,6 +385,7 @@ class Controller{
 	}
 	
 	void crearPersonajes(string user){
+		openDataBase();
         system("cls");
 		string userName;
 		string genero;
@@ -362,9 +421,10 @@ class Controller{
 
 	}
      int verRazasPorFaccion(int raza){
+		openDataBase();
         system("cls");
         cout<<"Razas Disponibles para "<< raza <<endl;
-        string query = "select raza.id, raza.nombre from existen,raza where existen.raza = raza.id and existen.faccion = "+ to_string(raza);
+        string query = "select raza.id, raza.nombre from existen,raza where existen.raza = raza.id and existen.faccion = "+ to_string(raza)+";";
         rc = sqlite3_exec(db, query.c_str(), callback, (void *)data, &zErrMsg);
         int choice;
         cout << "Digite el id de la raza que desea escoger" << endl;
@@ -373,9 +433,10 @@ class Controller{
       //  verClasesporRaza(choice);
     }
     int verClasesporRaza(int raza){
+		openDataBase();
         system("cls");
         cout << "Clases disponibles para " << raza << endl;
-        string query = "select clase.id, clase.nombre from tienen,clase where tienen.clase = clase.id and tienen.raza = " + to_string(raza);
+        string query = "select clase.id, clase.nombre from tienen,clase where tienen.clase = clase.id and tienen.raza = " + to_string(raza) +";";
         rc = sqlite3_exec(db, query.c_str(), callback, (void *)data, &zErrMsg);
         int choice;
         cout << "Digite el id de la clase que desea escoger" << endl;
@@ -385,16 +446,23 @@ class Controller{
     void insertarPersonaje(string user, string username, string genero, string color, int faccion, int raza, int clase)
     { 
 	    int continente=0;
-	    if(faccion==1){
-			continente=2;
+	    if(faccion==1 && raza!=13){
+			if(raza==5){
+				cout<<"Caso Especial Draneis"<<endl;
+				continente=1;
+			}else{
+			continente=2;}
 		}
-		if(faccion==2){
-			continente=1;
+		if(faccion==2 && raza!=13){
+			if(raza==11){
+				continente=2;
+			}else{
+			continente=1;}
 		}
 		if(raza==13){
 			continente=3;
 		}
-		
+		int region= verRegionezContinente(continente);
         string query = "insert into personaje(nombre, genero,color, jugador, faccion, raza, clase";
 		
     }

@@ -126,6 +126,7 @@ class Controller{
         sqlite3_free(zErrMsg);
         } else {
             fprintf(stdout, "Operation done successfully\n");
+			menuJugador(jugador.getId());
         }
         
         }
@@ -148,6 +149,9 @@ class Controller{
 			menuJugador(user);
         }
         
+	}
+	void jugador(){
+		
 	}
 	void menuIniciarSesion(){
 		string username;
@@ -287,6 +291,22 @@ class Controller{
  
         }while(choice ==1 && choice == 2);
 	}
+	void personaje(string apodo){
+			char sSQL [BUFFER_SIZE] = "\0";
+        
+		openDataBase();
+        sprintf(sSQL, "select * from personaje  where nombre='%s';",apodo.c_str());
+        rc = sqlite3_exec(db,sSQL, callback, (void*)data, &zErrMsg); 
+		sqlite3_close(db);
+        if( rc != SQLITE_OK ) {
+        fprintf(stderr, "SQL error: %s\n", zErrMsg);
+        sqlite3_free(zErrMsg);
+        } else {
+			cout<<"apodo,genero,color,jugador,faccion,raza,clase,region,armamento,nivel"<<endl;
+            fprintf(stdout, "Operation done successfully\n");
+		    menuPersonajes(apodo);
+        }
+	}
 	void verPersonajes(string user){
 		
 		char sSQL [BUFFER_SIZE] = "\0";
@@ -304,7 +324,7 @@ class Controller{
 			string choice;
             cout<<"Digite el apodo de su  personaje para ver mas opciones"<<endl;
             cin>>choice;
-		    menuPersonajes(choice);
+		    personaje(choice);
         }
 		
 	}
@@ -381,7 +401,7 @@ class Controller{
 		jugador.setNombre(nombre);
 		jugador.setStatus(true);
 		insertarJugadores(jugador);
-		menuJugador(username);
+		
 	}
 	
 	void crearPersonajes(string user){
@@ -436,7 +456,7 @@ class Controller{
 		openDataBase();
         system("cls");
         cout << "Clases disponibles para " << raza << endl;
-        string query = "select clase.id, clase.nombre from tienen,clase where tienen.clase = clase.id and tienen.raza = " + to_string(raza) +";";
+        string query = "select clase.id, clase.nombre from tienen,clase where tienen.clase = clase.id and tienen.raza = " + to_string(raza);
         rc = sqlite3_exec(db, query.c_str(), callback, (void *)data, &zErrMsg);
         int choice;
         cout << "Digite el id de la clase que desea escoger" << endl;

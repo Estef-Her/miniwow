@@ -89,7 +89,7 @@ class Controller{
 
         void menuInicio()
     {
-		
+	openDataBase();	
         int choice=0;
 		do{
 			cout<<("Inicio\n");
@@ -113,7 +113,6 @@ class Controller{
         }while(choice ==1 && choice == 2);
 	}
 	void insertarJugadores(Jugador jugador){
-		openDataBase();
 		sqlite3_stmt *stmt;  
 		cout<<"Abre metoodod "<<jugador.getNombre()<<" "<< jugador.getId()<<" "<<endl;
 		char sSQL [BUFFER_SIZE] = "\0";
@@ -133,7 +132,6 @@ class Controller{
 
 	
 	void iniciarJugador(string user){
-		openDataBase();
 		sqlite3_stmt *stmt;  
 		cout<<"Abre metoodod "<<user<<" "<<endl;
 		char sSQL [BUFFER_SIZE] = "\0";
@@ -186,7 +184,6 @@ class Controller{
         }while(choice ==1 && choice == 2 && choice ==3);
 	}
 	void eliminarPersonaje(string apodo){
-		openDataBase();
 		char sSQL [BUFFER_SIZE] = "\0";
         sprintf(sSQL, "delete from personaje where nombre= '%s';",apodo.c_str());
         rc = sqlite3_exec(db,sSQL, callback, (void*)data, &zErrMsg); 
@@ -198,7 +195,6 @@ class Controller{
         }
 	}
 	void verRegion(string apodo){
-		openDataBase();
 		char sSQL [BUFFER_SIZE] = "\0";
        
 		
@@ -213,7 +209,6 @@ class Controller{
         }
 	}
 	int verContinentes(){
-		openDataBase();
 		int choice=0;
 		char sSQL [BUFFER_SIZE] = "\0";
         sprintf(sSQL, "select * from continente ;");
@@ -229,7 +224,6 @@ class Controller{
 		return choice;
 	}
 	int verRegionesXContinente(int id){
-		openDataBase();
 		system("cls");
         cout << "--Regiones--"<< endl;
         string query = "select region.id , region.nombre from region where continente=" + to_string(id);
@@ -253,7 +247,6 @@ class Controller{
 		
 	}
 	void actualizarRegion(string apodo,int region){
-		openDataBase();
 		char sSQL [BUFFER_SIZE] = "\0";
         sprintf(sSQL, "update personaje set region =%i where nombre='%s';",region,apodo.c_str());
         rc = sqlite3_exec(db,sSQL, callback, (void*)data, &zErrMsg); 
@@ -293,11 +286,8 @@ class Controller{
 	}
 	void personaje(string apodo){
 			char sSQL [BUFFER_SIZE] = "\0";
-        
-		openDataBase();
         sprintf(sSQL, "select * from personaje  where nombre='%s';",apodo.c_str());
         rc = sqlite3_exec(db,sSQL, callback, (void*)data, &zErrMsg); 
-		sqlite3_close(db);
         if( rc != SQLITE_OK ) {
         fprintf(stderr, "SQL error: %s\n", zErrMsg);
         sqlite3_free(zErrMsg);
@@ -311,10 +301,8 @@ class Controller{
 		
 		char sSQL [BUFFER_SIZE] = "\0";
         
-		openDataBase();
         sprintf(sSQL, "select * from personaje where jugador='%s';",user.c_str());
         rc = sqlite3_exec(db,sSQL, callback, (void*)data, &zErrMsg); 
-		sqlite3_close(db);
         if( rc != SQLITE_OK ) {
         fprintf(stderr, "SQL error: %s\n", zErrMsg);
         sqlite3_free(zErrMsg);
@@ -329,7 +317,6 @@ class Controller{
 		
 	}
 	int verFacciones(){
-		openDataBase();
         system("cls");
         list<Faccion> * listFacciones = new list<Faccion>();
         rc = sqlite3_exec(db, "SELECT * from Faccion", mycallback, listFacciones, &zErrMsg);
@@ -361,12 +348,11 @@ class Controller{
 		int id;
         srand(time(NULL));
 		char sSQL [BUFFER_SIZE] = "\0";
-		openDataBase();
         system("cls");
         list<int> * listRegiones = new list<int>();
-		sprintf(sSQL, "SELECT region.id from region where region.continente=%i';",con);
+		sprintf(sSQL, "SELECT region.id from region where region.continente='%i';",con);
         rc = sqlite3_exec(db, sSQL, mycallback, listRegiones, &zErrMsg);
-
+        cout<<"Ejecutado"<<endl;
         if( rc != SQLITE_OK ) {
         fprintf(stderr, "SQL error: %s\n", zErrMsg);
         sqlite3_free(zErrMsg);
@@ -441,7 +427,6 @@ class Controller{
 
 	}
      int verRazasPorFaccion(int raza){
-		openDataBase();
         system("cls");
         cout<<"Razas Disponibles para "<< raza <<endl;
         string query = "select raza.id, raza.nombre from existen,raza where existen.raza = raza.id and existen.faccion = "+ to_string(raza)+";";
@@ -453,10 +438,12 @@ class Controller{
       //  verClasesporRaza(choice);
     }
     int verClasesporRaza(int raza){
-		openDataBase();
+		
         system("cls");
         cout << "Clases disponibles para " << raza << endl;
         string query = "select clase.id, clase.nombre from tienen,clase where tienen.clase = clase.id and tienen.raza = " + to_string(raza);
+		cout<<query<<endl;
+		
         rc = sqlite3_exec(db, query.c_str(), callback, (void *)data, &zErrMsg);
         int choice;
         cout << "Digite el id de la clase que desea escoger" << endl;
@@ -465,6 +452,7 @@ class Controller{
     }
     void insertarPersonaje(string user, string username, string genero, string color, int faccion, int raza, int clase)
     { 
+	    cout<<"Insertando"<<endl;
 	    int continente=0;
 	    if(faccion==1 && raza!=13){
 			if(raza==5){
@@ -482,6 +470,7 @@ class Controller{
 		if(raza==13){
 			continente=3;
 		}
+		cout<<"Ramdon "<<continente<<endl;
 		int region= verRegionezContinente(continente);
         string query = "insert into personaje(nombre, genero,color, jugador, faccion, raza, clase";
 		

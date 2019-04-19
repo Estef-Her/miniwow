@@ -5,12 +5,13 @@
 #include <iostream>
 #include<string>
 #include<list>
+#include<vector>
 #include<iterator>
 #include"Faccion.cpp"
 #include<time.h>
 #define BUFFER_SIZE 256
 using namespace std;
-//Cambios mas actuales 
+vector<Equipamento> vec;  // Vector de Equipamento global
 class Controller{
 	private:
 	///HOLA JOSUE 
@@ -34,7 +35,9 @@ class Controller{
             fprintf(stderr, "Opened database successfully\n");
         }
 	}
-	
+	void closeDataBase(){
+        sqlite3_close(this->db);
+    }
 	static int callback(void *data, int argc, char **argv, char **azColName){
         int i = 0;
         Faccion * f = new Faccion();
@@ -246,6 +249,75 @@ class Controller{
 		cout<<"Region : "<<region<<endl;
 		
 	}
+	void equiparPersonaje(string apodo){
+	//this->openDataBase();
+    
+      
+    std::string stm1= "select equipamiento.id,equipamiento.nombre,equipamiento.nivel_requerido from ";
+    std::string stm2=" puedeusar,(select * from personaje where personaje.nombre='"+apodo+"') as t1, equipamiento";
+    std::string stm3=" where puedeusar.clase=t1.clase AND equipamiento.nivel_requerido=t1.nivel ";
+    std::string stm4=stm1+stm2+stm3;
+      this->select_stmt(stm4.c_str());
+      //  std::cout<<stm4.c_str()<<std::endl;
+        std::cout<<"*******************************\n";
+       for(int i=0; i<vec.size();i++){
+        printf("%s",vec[i].toString().c_str());
+        std::cout<<"*******************************\n\n";
+       }
+
+      std::cout<<"\n\n\n";
+     int id; 
+    std::cout<<"Digite el id del armamento que desea equipar\n";
+    std::cin>>id;
+    std::string stmt="select * from equipamiento where equipamiento.id="+id;
+    vec.clear();
+    this->select_stmt(stmt.c_str());
+    Usa us;
+    us.setEquipamento(vec[0]);
+    Personaje aux;
+    aux.setNombre((char*)apodo.c_str());
+    us.setPersonaje(aux);
+    char sSQL [BUFFER_SIZE] = "\0";	
+        sprintf(sSQL, "insert into usa  values ('%s','%d');",us.getPersonaje().getNombre(),us.getEquipamento().getId() );
+        rc = sqlite3_exec(db,sSQL, callback, (void*)data, &zErrMsg); 
+        if( rc != SQLITE_OK ) {
+        fprintf(stderr, "SQL error: %s\n", zErrMsg);
+        sqlite3_free(zErrMsg);
+        } else {
+            fprintf(stdout, "Agregado correctamente en la Base de datos\n");
+        }
+   
+  
+     //this->closeDataBase();	
+	}
+	 void select_stmt(const char* stm){
+      
+      //Funcion que se utiliza para pasar el query y llamar a la funcion que la ejecuta
+        int ret = sqlite3_exec(db, stm, select_callback, NULL, NULL);
+        
+    }
+
+
+ static int  select_callback(void *data, int argc, char **argv, char **azColName)
+{
+   /*
+     Mete en el vector un objeto equipamiento que esta en la base
+    */
+   
+
+    //for(int i=0; i<argc; i++){
+        Equipamento eq;
+
+        eq.setId(atoi(argv[0]));
+        eq.setNombre(argv[1]);
+       eq.setNivel(atoi(argv[2]));
+       vec.push_back(eq);
+
+      
+   // }
+
+    return 0;
+}
 	void actualizarRegion(string apodo,int region){
 		char sSQL [BUFFER_SIZE] = "\0";
         sprintf(sSQL, "update personaje set region =%i where nombre='%s';",region,apodo.c_str());
@@ -351,7 +423,7 @@ class Controller{
         system("cls");
         list<int> * listRegiones = new list<int>();
 		sprintf(sSQL, "SELECT region.id from region where region.continente='%i';",con);
-        rc = sqlite3_exec(db, sSQL, mycallback, listRegiones, &zErrMsg);
+        rc = sqlite3_exec(db, sSQL, mycallbackRegiones, listRegiones, &zErrMsg);
         cout<<"Ejecutado"<<endl;
         if( rc != SQLITE_OK ) {
         fprintf(stderr, "SQL error: %s\n", zErrMsg);
@@ -472,9 +544,18 @@ class Controller{
 		}
 		cout<<"Ramdon "<<continente<<endl;
 		int region= verRegionezContinente(continente);
-        string query = "insert into personaje(nombre, genero,color, jugador, faccion, raza, clase) values (" + username + "," + genero + "," + color+ "," + user+ "," + to_string(faccion) + "," + to_string(raza )+ "," +to_string(clase) + ");";
-		cout<<query<<endl;
+		char sSQL [BUFFER_SIZE] = "\0";
 		
-        rc = sqlite3_exec(db, query.c_str(), callback, (void *)data, &zErrMsg);
+		sprintf(sSQL, "insert into personaje(nombre, genero,color, jugador, faccion, raza, clase,region, armamento , nivel ) values ('%s','%s','%s','%s',%i,%i,%i,%i,%i,%i);",username.c_str(),genero.c_str(),color.c_str(),user.c_str(),faccion , raza,clase,region,0,0);
+        rc = sqlite3_exec(db, sSQL, callback, (void *)data, &zErrMsg);
+        cout<<"Ejecutado"<<endl;
+        if( rc != SQLITE_OK ) {
+        fprintf(stderr, "SQL error: %s\n", zErrMsg);
+        sqlite3_free(zErrMsg);
+        }else {
+            fprintf(stdout, "Operation done successfully\n");
+            
+        }
+       
     }
 };

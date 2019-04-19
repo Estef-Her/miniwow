@@ -472,7 +472,9 @@ class Controller{
 		}
 		cout<<"Ramdon "<<continente<<endl;
 		int region= verRegionezContinente(continente);
-        string query = "insert into personaje(nombre, genero,color, jugador, faccion, raza, clase";
+        string query = "insert into personaje(nombre, genero,color, jugador, faccion, raza, clase) values (" + username + "," + genero + "," + color+ "," + user+ "," + to_string(faccion) + "," + to_string(raza )+ "," +to_string(clase) + ");";
+		cout<<query<<endl;
 		
+        rc = sqlite3_exec(db, query.c_str(), callback, (void *)data, &zErrMsg);
     }
 };
